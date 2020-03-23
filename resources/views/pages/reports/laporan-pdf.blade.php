@@ -7,7 +7,6 @@
   <title>PDF</title>
 
   <!-- Bootstrap CSS Min -->
-  {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> --}}
   <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
   <style>
 		table tr td,
@@ -44,10 +43,6 @@
       
         $i=1;
         $total_hrg=0;
-
-        // foreach ($data as $key => $value) {
-        //   $total_hrg += $value;
-        // }
 
       @endphp
 			@foreach($data as $d)

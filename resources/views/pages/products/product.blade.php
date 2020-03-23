@@ -15,56 +15,6 @@
     <!-- Main content -->
     <section class="content">
 
-    <!-- Cara Pagination 1 : Memanfaatkan Fungsi "Paginate()" Dalam Laravel -->
-    {{-- <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Pagination Using a Paginate Function In Laravel</h3>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-sm-12 col-md-12">
-              <form action="cari" method="GET">
-                {{ csrf_field() }}
-                <div class="form-group text-right">
-                  <input type="text" name="cari" placeholder="Cari Barang..." value="{{ old('cari') }}">
-                  <input type="submit" value="Cari">
-                </div>
-              </form>
-            </div>
-          </div>
-          <table class="table table-bordered">
-            <thead>                  
-              <tr class="text-center">
-                <th style="width: 50px">ID</th>
-                <th>Nama Produk</th>
-                <th style="width: 300px">Harga</th>
-                <th style="width: 100px">Stok</th>
-              </tr>
-            </thead>
-            <tbody>
-            @foreach($dataProduk as $dt)
-              <tr>
-                <td class="text-center">{{ $dt->id_barang }}</td>
-                <td>{{ $dt->nama_barang }}</td>
-                <td>Rp. {{ $dt->harga_satuan }}</td>
-                <td class="text-center">{{ $dt->stok }}</td>
-              </tr>
-            @endforeach
-            </tbody>
-          </table>
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer clearfix">
-          Jumlah Produk : {{ $dataProduk->total() }} 
-          <ul class="pagination pagination-sm m-0 float-right">
-            {{ $dataProduk->links() }}
-          </ul>
-        </div>
-      </div>
-      <!-- /.card -->
-    </div> --}}
-
     <!-- Cara Pagination 2 : Memanfaatkan CSS & Plugin Pada Bootstrap -->
     <div class="col-md-12">
       <div class="card">

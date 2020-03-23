@@ -161,32 +161,10 @@
         
         </div>
 
-        {{-- <div class="row">
-          <table class="table table-bordered">
-            <thead>                  
-              <tr class="text-center">
-                <th>Data 1</th>
-                <th>Data 2</th>
-              </tr>
-            </thead>
-            <tbody>
-            @foreach($jml_sales as $dt)
-              <tr>
-                <td>{{ $dt->nama_kat }}</td>
-                <td>{{ $dt->kat_terlaris }}</td>
-              </tr>
-            @endforeach
-            </tbody>
-          </table>
-        </div> --}}
-
       </div>
 
     </section>
     <!-- /.content -->
-
-    <!-- PAGE SCRIPT FOR DASHBOARD -->
-<!-- <script src="adminlte/js/pages/dashboard.js"></script> -->
   @endsection
 
 @section('dashboardjs')
@@ -218,7 +196,6 @@ var myLineChart = new Chart(ctx, {
         @foreach($total as $t)
           {{ $t }},
         @endforeach()
-        // 3200000, {{ $total }}, 2750000, 3000000, 6500000, 6000000
       ]
     }],
   },
@@ -257,20 +234,6 @@ var myLineChart = new Chart(ctx, {
     }
   }
 });
-
-
-// Pie Chart Example
-// var ctx = document.getElementById("myPieChart");
-// var myPieChart = new Chart(ctx, {
-//   type: 'pie',
-//   data: {
-//     labels: ["Blue", "Red", "Yellow", "Green"],
-//     datasets: [{
-//       data: [12.21, 15.58, 11.25, 8.32],
-//       backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
-//     }],
-//   },
-// });
 
 //pie
 var ctxP = document.getElementById("myPieChart").getContext('2d');

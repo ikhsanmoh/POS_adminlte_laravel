@@ -32,41 +32,9 @@ class WebController extends Controller
         $this->middleware('auth');
     }
 
-    //------------------------------- PAGE LOGIN --------------------------------------
-
-    // public function login(){
-    //     return view('pages.login');
-    // }
-
-    // // public function proses_login(Request $req){
-    // //     $usrnm = $req->username;
-    // //     $pass = $req->password;
-
-    // //     if (Auth::attempt(['username' => $usrnm, 'password' => $pass])) {
-    // //         return 'Halooo';
-    // //     } else {
-    // //         return 'Gagall';
-    // //     }
-    // // }
-
-    // public function forgotPass(){
-    //     return view('pages.forgotpass');
-    // }
-
     //------------------------------- PAGE DASHBOARD --------------------------------------
 
     public function dashboard(){
-
-        // $data = tb_transaksi::all();
-        // $dt = $data->only(['total_harga']);
-        // $dt->all();
-
-        // $dt = DB::table('tb_transaksi')
-        //         ->select(DB::raw('monthname(updated_at), total_harga'))
-        //         ->whereMonth('updated_at', $month)
-        //         ->get();
-
-        // $total_pemasukan = $dt->sum('total_harga');
 
         /* 
         jumlahkan total pemasukan penjualan barang group by date(bulan update)
@@ -157,168 +125,10 @@ class WebController extends Controller
             'jml_sales' => $get_transaksi]);
     }
 
-    //------------------------------- PAGE USERS --------------------------------------
-
-    // // Fungsi untuk menampilkan data users dari database
-    // public function users(){
-
-    //     // mengirim data pegawai ke view index
-    //     // $dataUsr = DB::table('users')
-    //     //     ->Join('users_bio', 'users.id', '=', 'users_bio.id')
-    //     //     ->where('users.id', $id)
-    //     //     ->get();
-
-    //     // $dataUsr0 = DB::table('users')
-    //     //     ->where('users.id', 1 )
-    //     //     ->get();
-    //     // $a = $dataUsr0->nama_lengkap;
-    //     // $a = "Mohamad Ikhsan";
-
-    //     // $dtUsrBaru = DB::table('users')->insert([
-    //     //     'nama_lengkap' => $a
-    //     // ]);
-
-    //     // Mengambil data dari database (Query Builder)
-    //     $dataUsr = DB::table('users')
-    //         ->get();
-
-    //     // Mengoper data ke page daftar user
-    //     return view('pages.users', ['usersData'=>$dataUsr]);
-    // }
-
-
-    // // Fungsi untuk memasukan data user baru ke database
-    // public function proses_tambah_users(Request $reqs){
-
-    //     //setting value of 0 & 1 data
-    //     if ($reqs->jk == 0) {
-    //         $jk = "Laki-laki";
-    //     } else {
-    //         $jk = "Perempuan";
-    //     }
-
-    //     if ($reqs->pos == 0 ) {
-    //         $pos = "Admin";
-    //     } else {
-    //         $pos = "Kasir";
-    //     }
-
-    //     if ($reqs->shift == 0) {
-    //         $shift = "Pagi";
-    //     } else {
-    //         $shift = "Malam";
-    //     }
-
-
-    //    // Memasukan data user baru ke database
-    //    $dtUsrBaru = DB::table('users')
-    //         ->insert([
-    //             'nama_lengkap' => $reqs->nm,
-    //             'username' => $reqs->usrnm,
-    //             'pass'=> $reqs->pass,
-    //             'jenis_kelamin' => $jk,
-    //             'alamat'=> $reqs->almt,
-    //             'no_tlp'=> $reqs->notlp,
-    //             'email'=> $reqs->email,
-    //             'jabatan'=> $pos,
-    //             'shift'=> $shift
-    //         ]);
-
-    //     // Mengarahkan kembali Route yang di tuju
-    //     return redirect()->route('users');
-    // }
-
-    // //Fungsi untuk Menampilkan Data lengkap User
-    // public function detail_user($id) {
-    //     $dt = DB::table('users')
-    //             ->where('users.id_user', $id)
-    //             ->get();
-    //     // ->find($id);
-
-    //     return view('pages.detail-user', ['dataUser' => $dt]);
-    // }
-
-    // //Fungsi untuk mengambil dan mengedit data dari user yang di inginkan
-    // public function edit_user($id){
-
-    //     // Menyeleksi/men-select data user dengan id yang di inginkan
-    //     $users = DB::table('users')
-    //                 ->where('users.id_user', $id)
-    //                 ->get();
-
-    //     return view('pages.edit', ['usersDt'=>$users]);
-
-    // }
-
-    // // Fungsi untuk menyimpan data user yang sudah di edit
-    // public function update(Request $req){
-
-    //      //setting value of 0 & 1 data
-    //      if ($req->jk == 0) {
-    //         $jk = "Laki-laki";
-    //     } else {
-    //         $jk = "Perempuan";
-    //     }
-
-    //     if ($req->pos == 0 ) {
-    //         $pos = "Super Admin";
-    //     } else {
-    //         $pos = "Admin";
-    //     }
-
-    //     if ($req->shift == 0) {
-    //         $shift = "Pagi";
-    //     } else {
-    //         $shift = "Malam";
-    //     }
-
-    //     // Memasukan data baru user yang telah di edit dan meniban(overwrites) data lama
-    //     $dtUpdate = DB::table('users')
-    //         ->where('users.id_user', $req->id)
-    //         ->update([
-    //             'nama_lengkap'=> $req->nm,
-    //             'username'=> $req->usrnm,
-    //             'pass'=> $req->pass,
-    //             'jenis_kelamin' => $jk,
-    //             'alamat'=> $req->almt,
-    //             'no_tlp'=> $req->notlp,
-    //             'email'=> $req->email,
-    //             'jabatan'=> $pos,
-    //             'shift'=> $shift
-    //         ]);
-        
-    //         return redirect()->route('users');
-    // }
-
-    // // Fungsi menghapus data user tertentu
-    // public function delete($id){
-    //     DB::table('users')
-    //         ->where('id_user', $id)
-    //         ->delete();
-
-    //     return redirect()->route('users');
-    // }
-
     //------------------------------- PAGE NEW USERS --------------------------------------
 
     // Fungsi untuk menampilkan data users dari database
     public function users(){
-
-        // mengirim data pegawai ke view index
-        // $dataUsr = DB::table('users')
-        //     ->Join('users_bio', 'users.id', '=', 'users_bio.id')
-        //     ->where('users.id', $id)
-        //     ->get();
-
-        // $dataUsr0 = DB::table('users')
-        //     ->where('users.id', 1 )
-        //     ->get();
-        // $a = $dataUsr0->nama_lengkap;
-        // $a = "Mohamad Ikhsan";
-
-        // $dtUsrBaru = DB::table('users')->insert([
-        //     'nama_lengkap' => $a
-        // ]);
 
         // Mengambil data dari database (Query Builder)
         $dataUsr = User::all();
@@ -331,13 +141,6 @@ class WebController extends Controller
     // Fungsi untuk memasukan data user baru ke database
     public function proses_tambah_users(Request $reqs){
 
-        //setting value of 0 & 1 data
-        // if ($reqs->jk == 0) {
-        //     $jk = "Laki-laki";
-        // } else {
-        //     $jk = "Perempuan";
-        // }
-
         if ($reqs->pos == 0 ) {
             // $pos = "Admin";
             $Role = Role::where('jabatan', 'Admin')->first();
@@ -345,13 +148,6 @@ class WebController extends Controller
             // $pos = "Kasir";
             $Role = Role::where('jabatan', 'Kasir')->first();
         }
-
-        // if ($reqs->shift == 0) {
-        //     $shift = "Pagi";
-        // } else {
-        //     $shift = "Malam";
-        // }
-
 
        // Memasukan data user baru ke database
        
@@ -363,19 +159,6 @@ class WebController extends Controller
            
         $admin->roles()->attach($Role);
 
-    //    $dtUsrBaru = DB::table('users')
-    //         ->insert([
-    //             'nama_lengkap' => $reqs->nm,
-    //             'username' => $reqs->usrnm,
-    //             'pass'=> $reqs->pass,
-    //             'jenis_kelamin' => $jk,
-    //             'alamat'=> $reqs->almt,
-    //             'no_tlp'=> $reqs->notlp,
-    //             'email'=> $reqs->email,
-    //             'jabatan'=> $pos,
-    //             'shift'=> $shift
-    //         ]);
-
         // Mengarahkan kembali Route yang di tuju
         return redirect()->route('users');
     }
@@ -383,10 +166,6 @@ class WebController extends Controller
     //Fungsi untuk Menampilkan Data lengkap User
     public function detail_user($id) {
         $dt = User::where('id', $id)->get();
-        // $dt = DB::table('users')
-        //         ->where('users.id', $id)
-        //         ->get();
-        // ->find($id);
 
         return view('pages.users.detail-user', ['dataUser' => $dt]);
     }
@@ -395,13 +174,6 @@ class WebController extends Controller
     public function edit_user(User $id){
         
         $roles = Role::all();
-        // dd($id, $roles);
-        // Menyeleksi/men-select data user dengan id yang di inginkan
-        // $users = User::where('id', $id)->get();
-
-        // $users = DB::table('users')
-        //             ->where('users.id_user', $id)
-        //             ->get();
 
         return view('pages.users.edit', [
             'usersDt'=>$id, 
@@ -413,58 +185,12 @@ class WebController extends Controller
     // Fungsi untuk menyimpan data user yang sudah di edit
     public function update(Request $req, User $id){
 
-         //setting value of 0 & 1 data
-        //  if ($req->jk == 0) {
-        //     $jk = "Laki-laki";
-        // } else {
-        //     $jk = "Perempuan";
-        // }
-
         $id->roles()->sync($req->pos);
         $id->name = $req->nm;
         $id->email = $req->email;
         $id->save();
-
-        // dd($req, $id);
-
-        // if ($req->pos == 0 ) {
-        //     // $pos = "Super Admin";
-        //     $Role = Role::where('jabatan', 'Admin')->first();
-        // } else {
-        //     // $pos = "Admin";
-        //     $Role = Role::where('jabatan', 'Kasir')->first();
-        // }
-
-        // if ($req->shift == 0) {
-        //     $shift = "Pagi";
-        // } else {
-        //     $shift = "Malam";
-        // }
-
-        // // Memasukan data baru user yang telah di edit dan meniban(overwrites) data lama
-        // $admin = User::where('id', $req->id)->update([
-        //     'name' => $req->nm,
-        //     'email' => $req->email
-        //     ]);
-            
-        // $admin->roles()->attach($Role);
-        // $user->roles()->sync();
-
-        // $dtUpdate = DB::table('users')
-        //     ->where('users.id_user', $req->id)
-        //     ->update([
-        //         'nama_lengkap'=> $req->nm,
-        //         'username'=> $req->usrnm,
-        //         'pass'=> $req->pass,
-        //         'jenis_kelamin' => $jk,
-        //         'alamat'=> $req->almt,
-        //         'no_tlp'=> $req->notlp,
-        //         'email'=> $req->email,
-        //         'jabatan'=> $pos,
-        //         'shift'=> $shift
-        //     ]);
         
-            return redirect()->route('users');
+        return redirect()->route('users');
     }
 
     // Fungsi menghapus data user tertentu
@@ -473,21 +199,10 @@ class WebController extends Controller
         $id->roles()->detach();
         $id->delete();
 
-        // dd($id);
-        // $user->roles()->detach();
-        // User::where('id', $id)
-        //         ->delete();
-
-        // DB::table('users')
-        //     ->where('id_user', $id)
-        //     ->delete();
-
         return redirect()->route('users');
     }
 
     //------------------------------- PAGE SUPLIERS ---------------------------------
-
-
     
     // Menampilkan data Supliers dari database
     public function supliers(){
@@ -723,129 +438,6 @@ class WebController extends Controller
 
         return redirect()->route('category');
     }
-    
-    //------------------------------- PAGE TRANSACTION --------------------------------------
-    
-    // // public function transaction(){
-
-    // //     // $dt = DB::table('tb_transaksi')
-    // //     //     ->get();
-        
-    // //     $dt = tb_transaksi::all();
-
-    // //     // $data = tb_produk::select('id_barang', 'nama_barang', 'harga_satuan')->get();
-    // //     $data_produk = tb_produk::all();
-
-
-    // //     return view('pages.transaction', ['transDt'=>$dt, 'dt_barang' => $data_produk]);
-    // // }
-
-    // public function input(){
-    //     return view('pages.input-trans');
-    // }
-
-    // public function proses_transaction(Request $req){
-
-    //     $messages = [
-    //         'required' => ':attribute Wajib Di Isi',
-    //         'max' => ':attribute Maksimal Berisi :max Karakter',
-    //         'numeric' => ':attribute Harus Berisi Angka'
-    //     ];
-
-    //     $this->validate($req, [
-    //         'namaBrg' => 'required|max:50',
-    //         'hrgSatuan' => 'required|numeric',
-    //         'jml' => 'required|numeric|max:10',
-    //     ], $messages);
-
-    //     $totalhrg = $req->hrgSatuan*$req->jml;
-
-    //     tb_transaksi::create([
-    //         'nama_barang' => $req->namaBrg,
-    //         'harga_satuan' => $req->hrgSatuan,
-    //         'jml_barang' => $req->jml,
-    //         'total_harga' => $totalhrg
-    //     ]);
-
-    //     // DB::table('tb_transaksi')
-    //     //     ->insert([
-    //     //         'nama_barang' => $req->namaBrg,
-    //     //         'harga_satuan' => $req->hrgSatuan,
-    //     //         'jml_barang' => $req->jml,
-    //     //         'total_harga' => $totalhrg
-    //     //     ]);
-
-
-    //     return redirect('/web-admin/transaction');
-    // }
-
-    // public function edit_trans($id){
-        
-    //     // $dt = tb_transaksi::where('id_transaksi', $id)->first();
-
-    //     $dt = tb_transaksi::findOrFail($id);
-
-    //     return view('pages.trans-edit', ['dt'=>$dt]); 
-    // }
-
-    // public function update_trans($id, Request $req){
-
-    //     $totalhrg = $req->hrgSatuan*$req->jml;
-
-    //     $dt = tb_transaksi::find($id);
-    //     $dt->nama_barang = $req->namaBrg;
-    //     $dt->harga_satuan = $req->hrgSatuan;
-    //     $dt->jml_barang = $req->jml;
-    //     $dt->total_harga = $totalhrg;
-    //     $dt->save();
-
-    //     return redirect('/web-admin/transaction');
-    // }
-
-    // public function delete_trans($id){
-    //     $dt = tb_transaksi::find($id);
-    //     $dt->delete();
-
-    //     return redirect('/web-admin/transaction');
-    // }
-
-    // public function tempat_sampah(){
-
-    //     $dt = tb_transaksi::onlyTrashed()->get();
-    //     $no = 1;
-
-    //     return view('pages.tempat-sampah', ['dt' => $dt, 'no' => $no]);
-    // }
-
-    // public function restore_trans($id){
-
-    //     $dt = tb_transaksi::onlyTrashed()->where('id_transaksi', $id);
-    //     $dt->restore();
-
-    //     return redirect('/web-admin/trash');
-    // }
-
-    // public function alt_del_trans($id){
-        
-    //     $dt = tb_transaksi::onlyTrashed()->where('id_transaksi', $id);
-    //     $dt->forceDelete();
-
-    //     return redirect('/web-admin/trash');
-    // }
-
-    // public function restore_all_trans(){
-    //     $dt = tb_transaksi::onlyTrashed();
-    //     $dt->restore();
-
-    //     return redirect('/web-admin/trash');
-    // }
-
-    // public function alt_del_all_trans(){
-    //     $dt = tb_transaksi::onlyTrashed();
-    //     $dt->forceDelete();
-
-    //     return redirect('/web-admin/trash');
-    // }
 
     //------------------------------ TES NEW TRANSAKSI -------------------------------------
 
@@ -892,13 +484,6 @@ class WebController extends Controller
 
     public function reports(){
 
-        // $dt = tb_transaksi::all();
-
-        // $get_transaksi = tb_transaksi::join('tb_produk', 'tb_transaksi.id_barang', '=', 'tb_produk.id_barang')
-        //                     ->select('tb_transaksi.created_at', 'tb_produk.nama_barang', 'tb_transaksi.jml_barang', 'tb_produk.harga_satuan', 'tb_transaksi.total_harga')
-        //                     ->get();
-        // $dt = $get_transaksi;
-
         $get_data_invoiceCustomer = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
                                                 ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
                                                 ->get();
@@ -920,12 +505,6 @@ class WebController extends Controller
         $customer_filter = "%".$req->customer_filter."%";
         $invoice_filter = "%".$req->invoice_filter."%";
 
-        // dd($invoice_filter);
-
-        // $dt = tb_transaksi::join('tb_produk', 'tb_transaksi.id_barang', '=', 'tb_produk.id_barang')
-        //                     ->select('tb_transaksi.created_at', 'tb_produk.nama_barang', 'tb_transaksi.jml_barang', 'tb_produk.harga_satuan', 'tb_transaksi.total_harga')
-        //                     ->get();
-
         $get_data_nama_customer_dalam_invoice = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
                                                             ->select('tb_customer.nama_customer')
                                                             ->distinct()
@@ -945,26 +524,6 @@ class WebController extends Controller
                                                     ->where('nama_customer', 'like', $customer_filter)
                                                     ->get();
         }
-        
-                                                            
-        
-
-        // $filtered_dt = $get_data_invoiceCustomer->where('id_invoice', '=', $invoice_filter)->all();
-
-        // $filtered_dt = $get_data_invoiceCustomer->where([
-        //     ['created_at', '>=', $from],
-        //     ['created_at', '<=', $to],
-        //     ['nama_customer', '=', $customer_filter],
-        //     ['id_invoice', '=', $invoice_filter]
-        // ])->get();
-
-        // dd($customer_filter, $invoice_filter, $get_data_invoiceCustomer);
-        
-
-        // $filtered_dt = $dt->whereBetween('created_at', [$from, $to]);
-        
-        // where('created_at', '<=', $from)->where('created_at', '>=', $to);
-        // $final_dt = $filtered_dt->all();
 
         return view('pages.reports.reports', ['dt_invoice_customer' => $get_data_invoiceCustomer, 
                                       'tglDari' => $from, 
@@ -982,20 +541,7 @@ class WebController extends Controller
         $input_cus = $request->id3;
         $input_inv = $request->id4;
 
-        // dd($request->id4);
-        
-        // $dt = tb_transaksi::join('tb_produk', 'tb_transaksi.id_barang', '=', 'tb_produk.id_barang')
-        //                     ->select('tb_transaksi.created_at', 'tb_produk.nama_barang', 'tb_transaksi.jml_barang', 'tb_produk.harga_satuan', 'tb_transaksi.total_harga')
-        //                     ->get();
-
-        // $dt = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
-        //                     ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
-        //                     ->get();
-
         if ($dari <> '' && $ke != '') {
-    
-            // $filtered_dt = $dt->whereBetween('created_at', [$dari, $ke]);
-
 
             $filtered_dt = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
                                 ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')

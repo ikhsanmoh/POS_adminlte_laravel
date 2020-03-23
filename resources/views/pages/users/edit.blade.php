@@ -26,48 +26,12 @@
             @csrf
             {{ method_field('PUT') }}
             <div class="card-body">
-              {{-- @foreach($usersDt as $dt) --}}
-                {{-- <input type="hidden" name="id" value="{{ $dt->id }}"> --}}
                 <div class="form-group row">
                   <label for="nm" class="col-sm-2 col-form-label">Nama</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" required="required" name="nm" value="{{ $usersDt->name }}">
                   </div>
                 </div>
-                {{-- <div class="form-group row">
-                  <label for="usrnm" class="col-sm-2 col-form-label">Username</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" required="required" name="usrnm" value="{{ $dt->username }}">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="pass" class="col-sm-2 col-form-label">Password</label>
-                  <div class="col-sm-10">
-                    <input type="password" class="form-control" required="required" name="pass" value="{{ $dt->pass }}">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="jk" class="col-sm-2 col-form-label">Jenis Kelamin</label>
-                  <div class="col-sm-10">
-                    <select name="jk" class="form-control" required="required">
-                      <option value="">Pilih</option>
-                      <option value="0">Laki-laki</option>
-                      <option value="1">Perempuan</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="almt" class="col-sm-2 col-form-label">Alamat</label>
-                  <div class="col-sm-10">
-                    <textarea class="form-control" required="required" name="almt">{{ $dt->alamat }}</textarea>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="notlp" class="col-sm-2 col-form-label">No. Telepon</label>
-                  <div class="col-sm-10">
-                    <input type="text" class="form-control" required="required" name="notlp" value="{{ $dt->no_tlp }}">
-                  </div>
-                </div> --}}
                 <div class="form-group row">
                   <label for="email" class="col-sm-2 col-form-label">Email</label>
                   <div class="col-sm-10">
@@ -85,17 +49,6 @@
                     </select>
                   </div>
                 </div>
-                {{-- <div class="form-group row">
-                  <label for="shift" class="col-sm-2 col-form-label">Shift</label>
-                  <div class="col-sm-10">
-                    <select name="shift" class="form-control" required="required">
-                      <option value="">Pilih</option>
-                      <option value="0">Pagi</option>
-                      <option value="1">Malam</option>
-                    </select>
-                  </div>
-                </div> --}}
-              {{-- @endforeach --}}
             </div>
             <!-- /.card-body -->
             <div class="card-footer text-right">
