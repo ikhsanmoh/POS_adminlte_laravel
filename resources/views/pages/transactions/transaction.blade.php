@@ -182,6 +182,7 @@
             </div>
             <!-- /.card -->
           </div>
+          @include('partials.alerts')
         </div>
         
       </div>

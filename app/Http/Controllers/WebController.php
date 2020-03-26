@@ -151,13 +151,19 @@ class WebController extends Controller
 
        // Memasukan data user baru ke database
        
-       $admin = User::create([
+       $dt = User::create([
            'name' => $reqs->nm,
            'email' => $reqs->email,
            'password' => Hash::make('password')
            ]);
            
-        $admin->roles()->attach($Role);
+        $dt->roles()->attach($Role);
+
+        if ($dt) {
+            $reqs->session()->flash('tambah-success', ' ' . $reqs->nm . ' ');
+        } else {
+            $reqs->session()->flash('tambah-error', ' ' . $reqs->nm . ' ');
+        }
 
         // Mengarahkan kembali Route yang di tuju
         return redirect()->route('users');
@@ -188,16 +194,28 @@ class WebController extends Controller
         $id->roles()->sync($req->pos);
         $id->name = $req->nm;
         $id->email = $req->email;
-        $id->save();
+
+
+        if ($id->save()) {
+            $req->session()->flash('edit-success', ' ' . $req->nm . ' ');
+        } else {
+            $req->session()->flash('edit-error', ' ' . $req->nm . ' ');
+        }
         
         return redirect()->route('users');
     }
 
     // Fungsi menghapus data user tertentu
-    public function delete(User $id){
+    public function delete(Request $req, User $id){
 
+        $dt = $id->name;
         $id->roles()->detach();
-        $id->delete();
+
+        if ($id->delete()) {
+            $req->session()->flash('hapus-success', ' ' . $dt . ' ');
+        } else {
+            $req->session()->flash('hapus-error', ' ' . $dt . ' ');
+        }
 
         return redirect()->route('users');
     }
@@ -226,6 +244,13 @@ class WebController extends Controller
                 'nomor_telepon'=> $reqs->nomor_telepon
             ]);
 
+        if ($dt) {
+            $reqs->session()->flash('tambah-success', ' ' . $reqs->nama_suplier . ' ');
+        } else {
+            $reqs->session()->flash('tambah-error', ' ' . $reqs->nama_suplier . ' ');
+        }
+        
+
         // Mengarahkan kembali Route yang di tuju
         return redirect()->route('supliers');
     }
@@ -245,7 +270,7 @@ class WebController extends Controller
     public function update_suplier(Request $req){
 
         // Memasukan data baru Suplier yang telah di edit dan mengganti(overwrites) data lama
-        $dtUpdate = DB::table('tb_suplier')
+        $dt_update = DB::table('tb_suplier')
             ->where('tb_suplier.id_suplier', $req->id)
             ->update([
                 'nama_suplier'=> $req->nama_suplier,
@@ -253,14 +278,27 @@ class WebController extends Controller
                 'nomor_telepon'=> $req->nomor_telepon
             ]);
         
-            return redirect()->route('supliers');
+        if ($dt_update) {
+            $req->session()->flash('edit-success', ' ' . $req->nama_suplier . ' ');
+        } else {
+            $req->session()->flash('edit-error', ' ' . $req->nama_suplier . ' ');
+        }
+
+        return redirect()->route('supliers');
     }
 
     // Fungsi menghapus data Suplier tertentu
-    public function delete_suplier($id){
-        DB::table('tb_suplier')
+    public function delete_suplier(Request $req, $id){
+        $dt = DB::table('tb_suplier')->select('nama_suplier')->where('id_suplier', $id)->first();
+        $dt_delete = DB::table('tb_suplier')
             ->where('id_suplier', $id)
             ->delete();
+        
+        if ($dt_delete) {
+            $req->session()->flash('hapus-success', ' ' . $dt->nama_suplier . ' ');
+        } else {
+            $req->session()->flash('hapus-error', ' ' . $dt->nama_suplier . ' ');
+        }
 
         return redirect()->route('supliers');
     }
@@ -289,6 +327,12 @@ class WebController extends Controller
                 'alamat' => $reqs->alamat
             ]);
 
+        if ($dt) {
+            $reqs->session()->flash('tambah-success', ' ' . $reqs->nama_customer . ' ');
+        } else {
+            $reqs->session()->flash('tambah-error', ' ' . $reqs->nama_customer . ' ');
+        }
+
         // Mengarahkan kembali Route yang di tuju
         return redirect()->route('customers');
     }
@@ -308,7 +352,7 @@ class WebController extends Controller
     public function update_customer(Request $req){
 
         // Memasukan data baru Customer yang telah di edit dan mengganti(overwrites) data lama
-        $dtUpdate = DB::table('tb_customer')
+        $dt_update = DB::table('tb_customer')
             ->where('id_customer', $req->id)
             ->update([
                 'nama_customer'=> $req->nama_customer,
@@ -316,14 +360,27 @@ class WebController extends Controller
                 'alamat'=> $req->alamat
             ]);
         
-            return redirect()->route('customers');
+        if ($dt_update) {
+            $req->session()->flash('edit-success', ' ' . $req->nama_customer . ' ');
+        } else {
+            $req->session()->flash('edit-error', ' ' . $req->nama_customer . ' ');
+        }
+
+        return redirect()->route('customers');
     }
 
     // Fungsi menghapus data Customer tertentu
-    public function delete_customer($id){
-        DB::table('tb_customer')
+    public function delete_customer(Request $req, $id){
+        $dt = DB::table('tb_customer')->select('nama_customer')->where('id_customer', $id)->first();
+        $dt_delete = DB::table('tb_customer')
             ->where('id_customer', $id)
             ->delete();
+
+        if ($dt_delete) {
+            $req->session()->flash('hapus-success', ' ' . $dt->nama_customer . ' ');
+        } else {
+            $req->session()->flash('hapus-error', ' ' . $dt->nama_customer . ' ');
+        }
 
         return redirect()->route('customers');
     }
@@ -347,7 +404,7 @@ class WebController extends Controller
 
     //Tambah Produk
     public function produk_tambah(Request $req) {
-        DB::table('tb_produk')
+        $dt = DB::table('tb_produk')
             ->insert([
                 'nama_barang' => $req->nama_barang,
                 'harga_satuan' => $req->harga,
@@ -361,6 +418,13 @@ class WebController extends Controller
                 'id_kat' => $req->kat,
                 'id_barang' => $id_barang_terbaru->id_barang
             ]);
+        
+        if ($dt) {
+            $req->session()->flash('tambah-success', ' ' . $req->nama_barang . ' ');
+        } else {
+            $req->session()->flash('tambah-error', ' ' . $req->nama_barang . ' ');
+        }
+
         return redirect()->route('product');
     }
 
@@ -376,7 +440,7 @@ class WebController extends Controller
     //Update Data Produk
     public function update_produk(Request $req) {
 
-        DB::table('tb_produk')
+        $dt_update = DB::table('tb_produk')
             ->where('tb_produk.id_barang', $req->id)
             ->update([
                 'nama_barang'=> $req->nama_barang,
@@ -388,14 +452,27 @@ class WebController extends Controller
             ->where('link_kategori.id_barang', $req->id)
             ->update( ['id_kat' => $req->kat] );
 
+        if ($dt_update) {
+            $req->session()->flash('edit-success', ' ' . $req->nama_barang . ' ');
+        } else {
+            $req->session()->flash('edit-error', ' ' . $req->nama_barang . ' ');
+        }
+        
         return redirect()->route('product');
     }
 
     //Delete Data Produk
-    public function delete_produk($id){
-        DB::table('tb_produk')
+    public function delete_produk(Request $req, $id){
+        $dt = tb_produk::select('nama_barang')->where('id_barang', $id)->first();
+        $dt_hapus = DB::table('tb_produk')
             ->where('id_barang', $id)
             ->delete();
+
+        if ($dt_hapus) {
+            $req->session()->flash('hapus-success', ' ' . $dt->nama_barang . ' ');
+        } else {
+            $req->session()->flash('hapus-error', ' ' . $dt->nama_barang . ' ');
+        }
 
         return redirect()->route('product');
     }
@@ -422,19 +499,34 @@ class WebController extends Controller
     
     // Tambah Kategori
     public function kategori_tambah(Request $req) {
-        DB::table('tb_kategori')
+        $dt = DB::table('tb_kategori')
             ->insert([
                 'nama_kat' => $req->nama_kategori,
             ]);
+
+        if ($dt) {
+            $req->session()->flash('tambah-success', ' ' . $req->nama_kategori . ' ');
+        } else {
+            $req->session()->flash('tambah-error', ' ' . $req->nama_kategori . ' ');
+        }
 
         return redirect()->route('category');
     }
 
     //Delete Data Kategori
-    public function delete_kategori($id){
-        DB::table('tb_kategori')
+    public function delete_kategori(Request $req, $id){
+
+        $dt = DB::table('tb_kategori')->select('nama_kat')->where('id_kat', $id)->first();
+
+        $dt_delete = DB::table('tb_kategori')
             ->where('id_kat', $id)
             ->delete();
+
+        if ($dt_delete) {
+            $req->session()->flash('hapus-success', ' ' . $dt->nama_kat . ' ');
+        } else {
+            $req->session()->flash('hapus-error', ' ' . $dt->nama_kat . ' ');
+        }
 
         return redirect()->route('category');
     }
@@ -460,7 +552,7 @@ class WebController extends Controller
         $cek_DataArr1 = $req->id_barang;
         $cek_DataArr2 = $req->jml_barang;
 
-        tb_invoice::create([
+        $simpan_data1 = tb_invoice::create([
             'id_invoice' => $cek_Data1,
             'id_user' => $cek_Data2,
             'id_customer' => $cek_Data3,
@@ -470,11 +562,17 @@ class WebController extends Controller
         ]);
 
         foreach ($cek_DataArr1 as $k => $v) {
-            tb_invoice_detail::create([
+            $simpan_data2 = tb_invoice_detail::create([
                 'id_invoice' => $cek_Data1,
                 'id_barang' => $v,
                 'qty' => $cek_DataArr2[$k]
             ]);
+        }
+
+        if ($simpan_data1 && $simpan_data2) {
+            $req->session()->flash('input-success', 'Input Transaction Success');
+        } else {
+            $req->session()->flash('input-error', 'Input Transaction Fail');
         }
 
         return redirect()->route('transaction');

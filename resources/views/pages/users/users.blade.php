@@ -15,6 +15,8 @@
     <!-- Main content -->
     <section class="content">
 
+    @include('partials.alerts')
+
     <div class="row">
       <div class="col-12">
         <div class="card">

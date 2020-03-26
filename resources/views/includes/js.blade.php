@@ -14,8 +14,13 @@
 <!--Jquery UI -->
 <script src="{{ asset('adminlte/plugins/jquery-ui/jquery-ui.js') }}"></script>
 
-<!-- Custom JS Of Pages -->
+<!-- Local Custom JS -->
 @yield('dashboardjs')
 @yield('productjs')
 @yield('transactionjs')
 @yield('reportsjs')
+
+<!-- Global Custom JS -->
+<script>
+  $('#message').delay(3000).fadeOut(300);
+</script>

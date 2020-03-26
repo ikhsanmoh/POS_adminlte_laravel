@@ -15,6 +15,8 @@
     <!-- Main content -->
     <section class="content">
 
+    @include('partials.alerts')
+
     <!-- Cara Pagination 2 : Memanfaatkan CSS & Plugin Pada Bootstrap -->
     <div class="col-md-12">
       <div class="card">
