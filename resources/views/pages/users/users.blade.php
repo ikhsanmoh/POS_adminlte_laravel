@@ -60,7 +60,7 @@
                   <td>
                     <a href="{{ route('users.detail.data', $dt->id) }}" class="btn btn-primary" role="button" title="Info Lainnya"><i class="fas fa-info-circle"></i></a>
                     <a href="{{ route('users.edit.data', $dt->id) }}" class="btn btn-success" role="button" title="Ubah Data"><i class="fas fa-user-edit"></i></a>
-                    <a href="{{ route('users.delete.data', $dt) }}" class="btn btn-danger" role="button" title="Hapus Data"><i class="fas fa-user-minus"></i></a>
+                    <a href="{{ route('users.delete.data', $dt) }}" class="btn btn-danger" role="button" title="Hapus Data" onclick="return confirm('Apa Anda Yakin Ingin Menghapus {{$dt->name}} ?')"><i class="fas fa-user-minus"></i></a>
                   </td>
                 </tr>
               @endforeach

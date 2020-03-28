@@ -184,6 +184,14 @@
           </div>
           @include('partials.alerts')
         </div>
+
+        @if (Session::has('stok-alert'))
+          <div class="row">
+            <div class="col-12">
+              @include('partials.stock-alert')
+            </div>
+          </div>
+        @endif
         
       </div>
       <!-- /.container-fluid -->
@@ -210,6 +218,7 @@
     var kd_barang;
     var hrg_produk;
     var sub_total;
+    var stok;
     var nm_barang = document.forms['formProduk']['nama_barang'].value;
     var jml_barang = document.forms['formProduk']['jumlah'].value;
     var ambil_id_input_total = document.getElementById('total_harga');
@@ -219,13 +228,19 @@
       var find_id = {{$dt->id_barang}}
       var find_nama_barang = "{{$dt->nama_barang}}"
       var find_harga = {{$dt->harga_satuan}}
+      var find_stok = {{$dt->stok}}
 
       if (find_nama_barang == nm_barang) {
         kd_barang = find_id;
         hrg_produk = find_harga;
         sub_total = find_harga*jml_barang;
+        stok = find_stok;
       }
     @endforeach
+
+    if (stok < jml_barang) {
+      return alert("Jumlah Produk Yang Di Pesan Melebihi Stok Yang Tersedia Saat Ini !!!")
+    }
     
     no = no + 1;
 

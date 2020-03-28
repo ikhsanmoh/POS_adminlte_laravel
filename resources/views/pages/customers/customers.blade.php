@@ -63,7 +63,7 @@
                   <td>{{ $d->nomor_telepon }}</td>
                   <td>
                     <a href="{{ route('customers.edit.data', $d->id_customer) }}" class="btn btn-success" role="button" title="Ubah Data"><i class="fas fa-user-edit"></i></a>
-                    <a href="{{ route('customers.delete.data', $d->id_customer) }}" class="btn btn-danger" role="button" title="Hapus Data"><i class="fas fa-user-minus"></i></a>
+                    <a href="{{ route('customers.delete.data', $d->id_customer) }}" class="btn btn-danger" role="button" title="Hapus Data" onclick="return confirm('Apa Anda Yakin Ingin Menghapus {{$d->nama_customer}} ?')"><i class="fas fa-user-minus"></i></a>
                   </td>
                 </tr>
               @endforeach

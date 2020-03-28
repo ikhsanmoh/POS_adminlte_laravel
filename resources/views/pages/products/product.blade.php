@@ -35,8 +35,8 @@
                 <th style="width: 30px">Kode</th>
                 <th>Nama Produk</th>
                 <th>Kategori</th>
-                <th style="width: 300px">Harga</th>
-                <th style="width: 100px">Stok</th>
+                <th style="width: 250px">Harga</th>
+                <th style="width: 170px">Stok</th>
                 <th>Opsi</th>
               </tr>
             </thead>
@@ -56,10 +56,24 @@
                   <td>{{ $dt2->nama_barang }}</td>
                   <td>{{ $dt2->nama_kat }}</td>
                   <td>Rp. {{ $dt2->harga_satuan }}</td>
-                  <td class="text-center">{{ $dt2->stok }}</td>
                   <td class="text-center">
-                    <a href="{{ route('product.edit.data', $dt2->id_barang) }}" class="btn btn-success btn-sm" role="button" title="Ubah Data Barang">Edit</a>
-                    <a href="{{ route('product.delete.data', $dt2->id_barang) }}" class="btn btn-danger btn-sm" role="button" title="Hapus Barang">Hapus</a>
+                    @if ($dt2->stok < 20 && $dt2->stok > 0)
+                      <button style="pointer-events: none;" class="btn btn-sm btn-warning">
+                        Low Stock <span class="badge badge-light badge-pill">{{ $dt2->stok }}</span>
+                      </button>
+                    @elseif ($dt2->stok == 0)
+                      <button style="pointer-events: none;" class="btn btn-sm btn-danger">
+                        Out Of Stock <span class="badge badge-light badge-pill">{{ $dt2->stok }}</span>
+                      </button>
+                    @else
+                      <button style="pointer-events: none;" class="btn btn-sm btn-success">
+                        Ready Stock <span class="badge badge-light badge-pill">{{ $dt2->stok }}</span>
+                      </button>
+                    @endif
+                  </td>
+                  <td class="text-center">
+                    <a href="{{ route('product.edit.data', $dt2->id_barang) }}" class="btn btn-info btn-sm" role="button" title="Ubah Data Barang">Edit</a>
+                    <a href="{{ route('product.delete.data', $dt2->id_barang) }}" class="btn btn-danger btn-sm" role="button" title="Hapus Barang" onclick="return confirm('Apa Anda Yakin Ingin Menghapus {{$dt2->nama_barang}} ?')">Hapus</a>
                   </td>
                 </tr>
               @endforeach

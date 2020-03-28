@@ -15,6 +15,7 @@ use App\tb_invoice;
 use App\tb_invoice_detail;
 use Gate;
 use Auth;
+use Session;
 use PDF;
 use Illuminate\Support\Str;
 
@@ -24,6 +25,17 @@ class WebController extends Controller
 
     public function get_tb_kategori_data() {
         return $data_kategori = DB::table('tb_kategori')->get();
+    }
+
+    public function stokAlert(){
+
+        $dt = tb_produk::select('stok')->where('stok', '<', 20)->first();
+        if ($dt) {
+            Session::put('stok-alert', 'Stok Anda Mendekati Kosong');
+        } else {
+            Session::forget('stok-alert');
+        }
+
     }
 
     //------------------------------ URL Protection -----------------------------------
@@ -115,6 +127,8 @@ class WebController extends Controller
                     ->get();
 
         $sort_produk = $get_produk->sortByDesc('created_at')->all();
+
+        $this->stokAlert();
 
         return view('pages.dashboard.dashboard', [
             'total' => $total_pemasukan, 
@@ -398,8 +412,13 @@ class WebController extends Controller
                             ->select('tb_produk.id_barang', 'tb_produk.nama_barang', 'tb_kategori.nama_kat', 'tb_produk.harga_satuan', 'tb_produk.stok')
                             ->get();
         // $data_kategori = DB::table('tb_kategori')->get();
+
+        $this->stokAlert();
         
-        return view('pages.products.product', ['dataProduk' => $dtProduk, 'dataProdukAll' => $dtProdukAll, 'dt_kat' => $this->get_tb_kategori_data()]);
+        return view('pages.products.product', [
+            'dataProduk' => $dtProduk, 
+            'dataProdukAll' => $dtProdukAll, 
+            'dt_kat' => $this->get_tb_kategori_data()]);
     }
 
     //Tambah Produk
@@ -562,11 +581,17 @@ class WebController extends Controller
         ]);
 
         foreach ($cek_DataArr1 as $k => $v) {
+
             $simpan_data2 = tb_invoice_detail::create([
                 'id_invoice' => $cek_Data1,
                 'id_barang' => $v,
                 'qty' => $cek_DataArr2[$k]
             ]);
+
+            $stok = tb_produk::select('stok')->where('id_barang', $v)->first();
+            $reduce_stok = $stok->stok - $cek_DataArr2[$k];
+            tb_produk::where('id_barang', $v)->update(['stok' => $reduce_stok]);
+            
         }
 
         if ($simpan_data1 && $simpan_data2) {

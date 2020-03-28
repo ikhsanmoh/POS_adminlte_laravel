@@ -52,7 +52,7 @@
                   <td class="text-center">{{ $d->id_kat }}</td>
                   <td>{{ $d->nama_kat }}</td>
                   <td class="text-center">
-                    <a href="{{ route('category.delete.data', $d->id_kat) }}" class="btn btn-danger btn-sm" role="button" title="Hapus Barang">Hapus</a>
+                    <a href="{{ route('category.delete.data', $d->id_kat) }}" class="btn btn-danger btn-sm" role="button" title="Hapus Barang" onclick="return confirm('Apa Anda Yakin Ingin Menghapus {{$d->nama_kat}} ?')">Hapus</a>
                   </td>
                 </tr>
               @endforeach
