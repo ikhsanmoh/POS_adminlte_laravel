@@ -22,7 +22,7 @@
           @php
             $no = 1;
             $tgl = date('d-m-y');
-            $tgl2 = date('dmyhis');
+            $tgl2 = date('dmy');
           @endphp
 
           <div class="col-md-4">
@@ -32,7 +32,10 @@
                   <tbody>
                     <tr>
                       <th scope="row"><label for="tanggal">Tanggal</label></th>
-                      <td><input type="text" name="tanggal" class="form-control" id="tanggal" value="{{ $tgl }}" disabled></td>
+                      <td>
+                        <input type="text" name="tanggal" class="form-control" id="tanggal" value="{{ $tgl }}" disabled>
+                        <input type="text" name="waktu" id="waktu" value="{{$tgl2}}" hidden>
+                      </td>
                     </tr>
                     <tr>
                       <th scope="row"><label for="nama_user">Kasir</label></th>
@@ -141,8 +144,8 @@
               <div class="card-body">
 
                 <table class="table table-sm table-borderless">
-                  <form action="{{ route('transaction.input.data') }}" method="post" id="formAkhir" name="formAkhir">
-                    {{ csrf_field() }}
+                  <form action="{{ route('sales.input.data') }}" method="post" id="formAkhir" name="formAkhir">
+                    @csrf
                     <tbody>
                       <tr>
                         <th scope="row"><label for="total">Total</label></th>
@@ -161,7 +164,7 @@
                       
                       <div id="dataTersembunyi" hidden>
                         <input type="text" name="invoice" value="" id="inv">
-                        <input type="number" name="nama_user" value="{{ Auth::user()->id }}" id="nm_usr">
+                        <input type="number" name="kd_user" value="{{ Auth::user()->id }}" id="kd_usr">
                         <input type="text" name="jenis_customer" value="" id="jn_cus">
                         <br>
                       </div>
@@ -266,12 +269,21 @@
     cellAksi.innerHTML = aksi;
     
     /* Membuat Kode Invoice (IN+tgl+id_usr+id_cus) */
+    var kd1 = 1;
+    var kd2 = document.getElementById("kd_usr").value;
+    var kd3 = document.getElementById("customer").value;
+    var kd4 = document.getElementById("waktu").value;
+    var dataUr = {{ $dt_urutan_inv + 1}};
 
-    var kd1 = "INV";
-    var kd2 = {{$tgl2}};
-    var kd3 = document.getElementById("nm_usr").value;
-    var kd4 = document.getElementById("customer").value;
-    var invKode = kd1 + kd2 + kd3 + kd4;
+    if ( dataUr > 9 && dataUr < 100 ) {
+      var kd5 = '0' + dataUr;  
+    } else if ( dataUr > 99 ) {
+      var kd5 = dataUr;
+    } else {
+      var kd5 = '00' + dataUr;
+    }
+
+    var invKode = kd1 + kd2 + kd3 + kd4 + kd5;
     var cekHiddenInv = document.getElementById("inv").value;
 
     if (!cekHiddenInv) {
@@ -284,7 +296,7 @@
 
     /* Membuat data hidden value 1 */
     var cekHiddenJnCus = document.getElementById('jn_cus').value;
-    var getValNamaUser = document.getElementById('nama_user').value;
+    // var getValNamaUser = document.getElementById('nama_user').value;
     var getValJenisCus = document.getElementById('customer').value;
 
     if (!cekHiddenJnCus) {

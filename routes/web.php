@@ -75,15 +75,26 @@ Route::prefix('category')->name('category.')->group(function(){
     Route::get('/delete/{id}', 'WebController@delete_kategori')->name('delete.data');
 });
 
-//Transaction Page
-Route::get('/transaction', 'WebController@transaction')->name('transaction');
-Route::prefix('transaction')->name('transaction.')->group(function(){
-    Route::post('/proses', 'WebController@olah_transaksi')->name('input.data');
+//Sales Page
+Route::get('/sales', 'WebController@sales')->name('sales');
+Route::prefix('sales')->name('sales.')->group(function(){
+    Route::post('/proses', 'WebController@input_sales')->name('input.data');
 });
 
-//Reports Page
-Route::get('/reports', 'WebController@reports')->name('reports');
-Route::prefix('reports')->name('reports.')->group(function(){
-    Route::post('/filter', 'WebController@filter_laporan')->name('filter');
-    Route::get('/pdf', 'WebController@lap_pdf')->name('pdf');
+//Stock In Page
+Route::get('/stock-in', 'WebController@stock_in')->name('stockin');
+Route::post('stock-in/proses', 'WebController@input_product')->name('stockin.input.data');
+
+//Reports Page - Sales
+Route::get('/reports/sales', 'WebController@sales_reports')->name('reports.sales');
+Route::prefix('reports/sales')->name('reports.sales.')->group(function(){
+    Route::post('/filter', 'WebController@filter_sales_laporan')->name('filter');
+    Route::get('/pdf', 'WebController@lap_sales_pdf')->name('pdf');
+});
+
+//Reports Page - Stock In
+Route::get('/reports/stockin', 'WebController@stockin_reports')->name('reports.stockin');
+Route::prefix('reports/stockin')->name('reports.stockin.')->group(function(){
+    Route::post('/filter', 'WebController@filter_stockin_laporan')->name('filter');
+    Route::get('/pdf', 'WebController@lap_stockin_pdf')->name('pdf');
 });

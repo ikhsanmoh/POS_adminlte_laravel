@@ -28,7 +28,13 @@
               @foreach($dt_produk as $dt)
                 <input type="hidden" name="id" value="{{ $dt->id_barang }}">
                 <div class="form-group row">
-                  <label for="nama_barang" class="col-sm-2 col-form-label">Nama Barang</label>
+                  <label for="kode_barang" class="col-sm-2 col-form-label">Kode Produk</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" name="kode_barang" value="{{ $dt->id_barang }}" disabled>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="nama_barang" class="col-sm-2 col-form-label">Nama Produk</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" required="required" name="nama_barang" value="{{ $dt->nama_barang }}">
                   </div>
@@ -45,15 +51,23 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="harga_barang" class="col-sm-2 col-form-label">Harga Barang</label>
+                  <label for="harga_barang" class="col-sm-2 col-form-label">Harga Produk</label>
                   <div class="col-sm-10">
                     <input type="number" class="form-control" required="required" name="harga_barang" value="{{ $dt->harga_satuan }}">
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label for="stok" class="col-sm-2 col-form-label">Stok</label>
+                  <label for="pp" class="col-sm-2 col-form-label">Foto Produk</label>
                   <div class="col-sm-10">
-                    <input type="number" class="form-control" required="required" name="stok" value="{{ $dt->stok }}">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="foto_barang" id="pp">
+                        <label class="custom-file-label" for="exampleInputFile">Pilih File</label>
+                      </div>
+                      <div class="input-group-append">
+                        <span class="input-group-text" id="">Unggah</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               @endforeach

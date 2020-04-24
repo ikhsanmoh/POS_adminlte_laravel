@@ -31,6 +31,18 @@
   </div>
 @endif
 
+@if (session('input-stockin-success'))
+  <div id="message" class="alert alert-success" role="alert">
+    <i class="fas fa-check"></i>{{ session('input-stockin-success') }}
+  </div>
+@endif
+
+@if (session('input-stockin-error'))
+<div id="message" class="alert alert-danger" role="alert">
+  <i class="fas fa-times"></i>{{ seesion('input-stockin-error') }}
+</div>
+@endif
+
 <!-- Supliers, Customers, Users Alerts -->
 @if (session('tambah-success'))
   <div id="message" class="alert alert-success" role="alert">

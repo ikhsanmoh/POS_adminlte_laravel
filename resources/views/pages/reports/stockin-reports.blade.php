@@ -7,7 +7,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
     <div class="col-sm-6">
-        <h1>Report Form</h1>
+        <h1>Report Form - Stock In</h1>
     </div>
     </div>
   </div><!-- /.container-fluid -->
@@ -22,7 +22,7 @@
           <div class="card">
             <div class="card-body">
 
-              <form action="{{ route('reports.filter') }}" method="post" autocomplete="off">
+              <form action="{{ route('reports.stockin.filter') }}" method="post" autocomplete="off">
                 {{ csrf_field() }}
                 
                 <div class="form-row">
@@ -35,17 +35,17 @@
                     <input type="text" class="form-control form-control-sm form-control-mb-2 rentang-tgl" placeholder="Pilih Tanggal Akhir" name="toDate" value={{$tglKe??''}}>
                   </div>
                   <div class="col-2">
-                    <label for="customer">Customer</label>
-                    <select class="custom-select custom-select-sm" name="customer_filter">
+                    <label for="suplier">Supplier</label>
+                    <select class="custom-select custom-select-sm" name="suplier_filter">
                       <option value="">-All-</option>
                       @foreach ($filter_nama as $dt)
-                          <option value="{{ $dt->nama_customer }}">{{ $dt->nama_customer }}</option>
+                          <option value="{{ $dt->nama_suplier }}">{{ $dt->nama_suplier }}</option>
                       @endforeach
                     </select>
                   </div>
                   <div class="col">
                     <label for="invoice">Invoice</label>
-                    <input type="text" class="form-control form-control-sm" name="invoice_filter" placeholder="Masukan Invoice">
+                    <input type="number" class="form-control form-control-sm" name="invoice_filter" placeholder="Masukan Invoice">
                   </div>
                 </div>  
                 <br>
@@ -81,25 +81,24 @@
                   <th scope="col" style="width:50px">No</th>
                   <th scope="col">Invoice</th>
                   <th scope="col">Tanggal</th>
-                  <th scope="col">Customer</th>
-                  <th scope="col" style="width:150px">Sub Total</th>
-                  <th scope="col">Aksi</th>
+                  <th scope="col">Supplier</th>
+                  <th scope="col" style="width:250px">Sub Total</th>
+                  <th scope="col" style="width:150px">Aksi</th>
                 </tr>
                 </thead>
                 <tbody>
-                  @foreach ($dt_invoice_customer as $d)
+                  @foreach ($dt_invoice_suplier as $d)
                     <tr>
                       <td class="text-center">{{ $no++ }}</td>
                       <td>{{ $d->id_invoice }}</td>
                       <td>{{ $d->created_at }}</td>
-                      <td>{{ $d->nama_customer }}</td>
-                      <td>Rp. {{ $d->total }}</td>
+                      <td>{{ $d->nama_suplier }}</td>
+                      <td>Rp. {{ $total = $d->harga_satuan*$d->qty }}</td>
                       <td class="text-center">
-                        <a href="detail-invoice{{ $d->id_invoice }}" class="btn btn-info btn-sm" role="button" title="Lihat Detail">Detail</a>
-                        <a href="cetak-invoice{{ $d->id_invoice }}" class="btn btn-warning btn-sm" role="button" title="Cetak">Cetak</a>
+                        <a href="#" class="btn btn-info btn-sm" role="button" title="Lihat Detail">Detail</a>
                       </td>
                     </tr>
-                    <div hidden>{{ $total_hrg += $d->total }}</div>
+                    <div hidden>{{ $total_hrg += $total }}</div>
                   @endforeach
                 </tbody>
                 <tfoot>

@@ -18,6 +18,7 @@
 @yield('dashboardjs')
 @yield('productjs')
 @yield('transactionjs')
+@yield('stockinjs')
 @yield('reportsjs')
 
 <!-- Global Custom JS -->

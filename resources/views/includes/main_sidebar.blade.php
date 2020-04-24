@@ -92,13 +92,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('transaction') }}" class="nav-link">
+              <a href="{{ route('sales') }}" class="nav-link">
                 &nbsp;&nbsp;&nbsp;<i class="far fa-circle nav-icon"></i>
                 <p>Sales</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('stockin') }}" class="nav-link">
                 &nbsp;&nbsp;&nbsp;<i class="far fa-circle nav-icon"></i>
                 <p>Stock In</p>
               </a>
@@ -116,13 +116,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ route('reports') }}" class="nav-link">
+              <a href="{{ route('reports.sales') }}" class="nav-link">
                 &nbsp;&nbsp;&nbsp;<i class="far fa-circle nav-icon"></i>
                 <p>Sales</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="{{ route('reports.stockin') }}" class="nav-link">
                 &nbsp;&nbsp;&nbsp;<i class="far fa-circle nav-icon"></i>
                 <p>Stock</p>
               </a>

@@ -20,10 +20,10 @@
     <!-- Cara Pagination 2 : Memanfaatkan CSS & Plugin Pada Bootstrap -->
     <div class="col-md-12">
       <div class="card">
-        <div class="card-header">
+        {{-- <div class="card-header">
           <a href="" data-target="#formTambahBarang" data-toggle="modal" role="button" class="btn btn-primary col-md-2"><i class="fas fa-plus"></i> Tambah Barang</a>
-        </div>
-        <!-- /.card-header -->
+        </div> --}}
+        <!-- /.card-header --> 
         <div class="card-body">
           <table id="example1" class="table table-bordered table-striped">
             @php
@@ -98,7 +98,7 @@
 
 
     <!-- MODAL FORM - TAMBAH BARANG -->
-    <div class="modal fade" id="formTambahBarang" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="formTambahBarang" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -155,7 +155,7 @@
               </form>
         </div>
       </div>
-    </div>
+    </div> --}}
     
     </section>
     <!-- /.content -->

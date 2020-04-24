@@ -12,7 +12,8 @@ use App\Role;
 use App\tb_transaksi;
 use App\tb_produk;
 use App\tb_invoice;
-use App\tb_invoice_detail;
+use App\tb_invoice_customer;
+use App\tb_invoice_supliers;
 use Gate;
 use Auth;
 use Session;
@@ -550,39 +551,59 @@ class WebController extends Controller
         return redirect()->route('category');
     }
 
-    //------------------------------ TES NEW TRANSAKSI -------------------------------------
+    //------------------------------ TRANSACTION-SALES -------------------------------------
 
-    public function transaction(){
+    public function sales(){
 
         $dt1 = tb_produk::all();
         $dt2 = DB::table('tb_customer')->get();
+        $tgl = date('dmy');
 
-        return view('pages.transactions.transaction', ['dt_barang' => $dt1, 'dt_customers' => $dt2]);
+        $dt3 = tb_invoice::select('id_invoice')->where('id_invoice', 'LIKE', '1'.'%'.$tgl.'%')->get();
+        if ( !$dt3->isEmpty() ) {
+
+            $dt4 = collect([]);
+            foreach ($dt3 as $k => $v) {
+                $dt4[] = substr($v, -4, 3);
+            }
+            $dt5 = $dt4->max();
+
+        } else {
+            $dt5 = "0";
+        }
+
+        // dd( boolval($dt3), $dt5 , boolval($dt5) );
+
+        return view('pages.transactions.sales', [
+            'dt_barang' => $dt1, 
+            'dt_customers' => $dt2, 
+            'dt_urutan_inv' => $dt5
+            ]);
     }
     
-    public function olah_transaksi(Request $req) {
+    public function input_sales(Request $req) {
 
         $cek_Data1 = $req->invoice;
-        $cek_Data2 = $req->nama_user;
+        $cek_Data2 = $req->kd_user;
         $cek_Data3 = $req->jenis_customer;
-        $cek_Data4 = $req->total_harga;
-        $cek_Data5 = $req->tunai;
-        $cek_Data6 = $req->kembalian;
+        // $cek_Data4 = $req->total_harga;
+        // $cek_Data5 = $req->tunai;
+        // $cek_Data6 = $req->kembalian;
         $cek_DataArr1 = $req->id_barang;
         $cek_DataArr2 = $req->jml_barang;
 
         $simpan_data1 = tb_invoice::create([
             'id_invoice' => $cek_Data1,
             'id_user' => $cek_Data2,
-            'id_customer' => $cek_Data3,
-            'total' => $cek_Data4,
-            'tunai' => $cek_Data5,
-            'kembali' => $cek_Data6
+            'id_customer' => $cek_Data3
+            // 'total' => $cek_Data4,
+            // 'tunai' => $cek_Data5,
+            // 'kembali' => $cek_Data6
         ]);
 
         foreach ($cek_DataArr1 as $k => $v) {
 
-            $simpan_data2 = tb_invoice_detail::create([
+            $simpan_data2 = tb_invoice_customer::create([
                 'id_invoice' => $cek_Data1,
                 'id_barang' => $v,
                 'qty' => $cek_DataArr2[$k]
@@ -600,29 +621,125 @@ class WebController extends Controller
             $req->session()->flash('input-error', 'Input Transaction Fail');
         }
 
-        return redirect()->route('transaction');
+        return redirect()->route('sales');
     }
 
-    //------------------------------- PAGE REPORT FORM --------------------------------------
+    //------------------------------ TRANSACTION-STOCK IN -------------------------------------
 
-    public function reports(){
+    public function stock_in(){
+
+        $dt1 = DB::table('tb_suplier')->get();
+        $dt2 = DB::table('tb_kategori')->get();
+        $tgl = date('dmy');
+        
+        $dt3 = tb_invoice::select('id_invoice')->where('id_invoice', 'LIKE', '2'.'%'.$tgl.'%')->get();
+
+        return view('pages.transactions.stock-in', [
+            'data_suplier' => $dt1,
+            'data_kategori' => $dt2,
+            'dt_urutan_inv' => $dt3
+            ]);
+    }
+
+    public function input_product(Request $req){
+
+        $data1 = $req->invoice;
+        $data2 = $req->kd_user;
+        $data3 = $req->kode_supp;
+        $dataArr1 = $req->nama_barang;
+        $dataArr2 = $req->harga_beli;
+        $dataArr3 = $req->harga_jual;
+        $dataArr4 = $req->jumlah_barang;
+        
+
+        // dd($req, $data1, $data2, $data3, $dataArr1, $dataArr2, $dataArr3, $dataArr4, $cek_produk);
+
+        $simpan_data1 = tb_invoice::create([
+            'id_invoice' => $data1,
+            'id_user' => $data2,
+            'id_suplier' => $data3
+        ]);
+
+        foreach ($dataArr1 as $k => $v) {
+
+            $cek_produk = tb_produk::select('stok')->where('nama_barang', $v)->get();
+
+            if ( $cek_produk->isEmpty() ) {
+
+                $simpan_data2 = tb_produk::create([
+                    'nama_barang' => $v,
+                    'harga_satuan' => $dataArr3[$k],
+                    'stok' => $dataArr4[$k]
+                ]);
+                
+            } else {
+
+                $stoks = tb_produk::select('stok')->where('nama_barang', $v)->first();
+                $increase_stok = $stoks->stok + $dataArr4[$k];
+                $simpan_data2 = tb_produk::where('nama_barang', $v)->update(['stok' => $increase_stok]);
+
+            }
+
+            $id_produk_terbaru = tb_produk::get()->max('id_barang');
+            
+            $simpan_data3 = tb_invoice_supliers::create([
+                'id_invoice' => $data1,
+                'id_barang' => $id_produk_terbaru,
+                'harga_beli' => $dataArr2[$k],
+                'qty' => $dataArr4[$k]
+            ]);
+        }
+
+        if ($simpan_data1 && $simpan_data2 && $simpan_data3) {
+            $req->session()->flash('input-stockin-success', ' Transaction Success');
+        } else {
+            $req->session()->flash('input-stockin-error', ' Transaction Fail');
+        }
+
+        return redirect()->route('stockin');
+
+    }
+
+    //------------------------------- PAGE REPORT FORM - SALES --------------------------------------
+
+    public function sales_reports(){
+
+        // $get_data_invoiceCustomer = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
+        //                                         ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
+        //                                         ->get();
+        
+        // $get_data_nama_customer_dalam_invoice = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
+        //                                                     ->select('tb_customer.nama_customer')
+        //                                                     ->distinct()
+        //                                                     ->get();
+
 
         $get_data_invoiceCustomer = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
-                                                ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
+                                                ->join('users', 'tb_invoice.id_user', '=', 'users.id')
+                                                ->join('tb_invoice_customer', 'tb_invoice.id_invoice', '=', 'tb_invoice_customer.id_invoice')
+                                                ->join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                                                ->select(
+                                                    'tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 
+                                                    'tb_produk.nama_barang', 'tb_produk.harga_satuan', 'tb_invoice_customer.qty'
+                                                    )
                                                 ->get();
+        
+        
         
         $get_data_nama_customer_dalam_invoice = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
                                                             ->select('tb_customer.nama_customer')
                                                             ->distinct()
                                                             ->get();
 
-        return view('pages.reports.reports', [
+        // dd($get_data_invoiceCustomer, $get_data_nama_customer_dalam_invoice);
+
+        return view('pages.reports.sales-reports', [
             'dt_invoice_customer' => $get_data_invoiceCustomer, 
             'filter_nama' => $get_data_nama_customer_dalam_invoice
             ]);
     }
 
-    public function filter_laporan(Request $req) {
+    public function filter_sales_laporan(Request $req) {
         $from = $req->fromDate;
         $to = $req->toDate;
         $customer_filter = "%".$req->customer_filter."%";
@@ -635,20 +752,32 @@ class WebController extends Controller
 
         if ($from != null && $to != null) {
             $get_data_invoiceCustomer = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
-                                                    ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
-                                                    ->whereRaw('date(created_at) BETWEEN ? AND ?', [$from, $to])
-                                                    ->where('id_invoice', 'like', $invoice_filter)
-                                                    ->where('nama_customer', 'like', $customer_filter)
+                                                    ->join('tb_invoice_customer', 'tb_invoice.id_invoice', '=', 'tb_invoice_customer.id_invoice')
+                                                    ->join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                                                    ->select(
+                                                        'tb_invoice.id_invoice', 'tb_invoice.created_at', 
+                                                        'tb_customer.nama_customer', 'tb_invoice_customer.qty',
+                                                        'tb_produk.harga_satuan'
+                                                        )
+                                                    ->whereRaw('date(tb_invoice.created_at) BETWEEN ? AND ?', [$from, $to])
+                                                    ->where('tb_invoice.id_invoice', 'like', $invoice_filter)
+                                                    ->where('tb_customer.nama_customer', 'like', $customer_filter)
                                                     ->get();
         } else {
             $get_data_invoiceCustomer = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
-                                                    ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
-                                                    ->where('id_invoice', 'like', $invoice_filter)
-                                                    ->where('nama_customer', 'like', $customer_filter)
+                                                    ->join('tb_invoice_customer', 'tb_invoice.id_invoice', '=', 'tb_invoice_customer.id_invoice')
+                                                    ->join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                                                    ->select(
+                                                        'tb_invoice.id_invoice', 'tb_invoice.created_at', 
+                                                        'tb_customer.nama_customer', 'tb_invoice_customer.qty',
+                                                        'tb_produk.harga_satuan'
+                                                        )
+                                                    ->where('tb_invoice.id_invoice', 'like', $invoice_filter)
+                                                    ->where('tb_customer.nama_customer', 'like', $customer_filter)
                                                     ->get();
         }
 
-        return view('pages.reports.reports', ['dt_invoice_customer' => $get_data_invoiceCustomer, 
+        return view('pages.reports.sales-reports', ['dt_invoice_customer' => $get_data_invoiceCustomer, 
                                       'tglDari' => $from, 
                                       'tglKe' => $to,
                                       'input_customer' => $customer_filter,
@@ -657,7 +786,7 @@ class WebController extends Controller
                                       ]);
     }
 
-    public function lap_pdf(Request $request) {
+    public function lap_sales_pdf(Request $request) {
 
         $dari = $request->id1;
         $ke =  $request->id2;
@@ -675,7 +804,7 @@ class WebController extends Controller
 
             $ke =  Str::before($request->id2,'%');
             
-            $pdf = PDF::loadview('pages.reports.laporan-pdf', ['data'=>$filtered_dt, 'dari'=>$dari, 'ke'=>$ke]);
+            $pdf = PDF::loadview('pages.reports.laporan-sales-pdf', ['data'=>$filtered_dt, 'dari'=>$dari, 'ke'=>$ke]);
             return $pdf->stream();
 
         } else {
@@ -686,7 +815,113 @@ class WebController extends Controller
                                 ->where('nama_customer', 'like', $input_cus)
                                 ->get();
 
-            $pdf = PDF::loadview('pages.reports.laporan-pdf', ['data'=>$filtered_dt]);
+            $pdf = PDF::loadview('pages.reports.laporan-sales-pdf', ['data'=>$filtered_dt]);
+            return $pdf->stream();
+
+        }
+    }
+
+    //------------------------------- PAGE REPORT FORM - STOCKIN --------------------------------------
+    public function stockin_reports(){
+
+        $get_data_invoiceSuplier = tb_invoice::join('tb_suplier', 'tb_invoice.id_suplier', '=', 'tb_suplier.id_suplier')
+                                                ->join('users', 'tb_invoice.id_user', '=', 'users.id')
+                                                ->join('tb_invoice_supliers', 'tb_invoice.id_invoice', '=', 'tb_invoice_supliers.id_invoice')
+                                                ->join('tb_produk', 'tb_invoice_supliers.id_barang', '=', 'tb_produk.id_barang')
+                                                ->select(
+                                                    'tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_suplier.nama_suplier', 
+                                                    'tb_produk.nama_barang', 'tb_produk.harga_satuan', 'tb_invoice_supliers.qty'
+                                                    )
+                                                ->get();
+        
+        $get_data_nama_supplier_dalam_invoice = tb_invoice::join('tb_suplier', 'tb_invoice.id_suplier', '=', 'tb_suplier.id_suplier')
+                                                            ->select('tb_suplier.nama_suplier')
+                                                            ->distinct()
+                                                            ->get();
+
+        return view('pages.reports.stockin-reports', [
+            'dt_invoice_suplier' => $get_data_invoiceSuplier, 
+            'filter_nama' => $get_data_nama_supplier_dalam_invoice
+            ]);
+    }
+
+    public function filter_stockin_laporan(Request $req) {
+        $from = $req->fromDate;
+        $to = $req->toDate;
+        $suplier_filter = "%".$req->suplier_filter."%";
+        $invoice_filter = "%".$req->invoice_filter."%";
+
+        $get_data_nama_suplier_dalam_invoice = tb_invoice::join('tb_suplier', 'tb_invoice.id_suplier', '=', 'tb_suplier.id_suplier')
+                                                            ->select('tb_suplier.nama_suplier')
+                                                            ->distinct()
+                                                            ->get();
+
+        if ($from != null && $to != null) {
+            $get_data_invoiceSuplier = tb_invoice::join('tb_suplier', 'tb_invoice.id_suplier', '=', 'tb_suplier.id_suplier')
+                                                    ->join('tb_invoice_supliers', 'tb_invoice.id_invoice', '=', 'tb_invoice_supliers.id_invoice')
+                                                    ->join('tb_produk', 'tb_invoice_supliers.id_barang', '=', 'tb_produk.id_barang')
+                                                    ->select(
+                                                        'tb_invoice.id_invoice', 'tb_invoice.created_at', 
+                                                        'tb_suplier.nama_suplier', 'tb_invoice_supliers.qty',
+                                                        'tb_produk.harga_satuan'
+                                                        )
+                                                    ->whereRaw('date(tb_invoice.created_at) BETWEEN ? AND ?', [$from, $to])
+                                                    ->where('tb_invoice.id_invoice', 'like', $invoice_filter)
+                                                    ->where('tb_suplier.nama_suplier', 'like', $suplier_filter)
+                                                    ->get();
+        } else {
+            $get_data_invoiceSuplier = tb_invoice::join('tb_suplier', 'tb_invoice.id_suplier', '=', 'tb_suplier.id_suplier')
+                                                    ->join('tb_invoice_supliers', 'tb_invoice.id_invoice', '=', 'tb_invoice_supliers.id_invoice')
+                                                    ->join('tb_produk', 'tb_invoice_supliers.id_barang', '=', 'tb_produk.id_barang')
+                                                    ->select(
+                                                        'tb_invoice.id_invoice', 'tb_invoice.created_at', 
+                                                        'tb_suplier.nama_suplier', 'tb_invoice_supliers.qty',
+                                                        'tb_produk.harga_satuan'
+                                                        )
+                                                    ->where('tb_invoice.id_invoice', 'like', $invoice_filter)
+                                                    ->where('tb_suplier.nama_suplier', 'like', $suplier_filter)
+                                                    ->get();
+        }
+
+        return view('pages.reports.stockin-reports', ['dt_invoice_suplier' => $get_data_invoiceSuplier, 
+                                      'tglDari' => $from, 
+                                      'tglKe' => $to,
+                                      'input_suplier' => $suplier_filter,
+                                      'input_invoice' => $invoice_filter, 
+                                      'filter_nama' => $get_data_nama_suplier_dalam_invoice
+                                      ]);
+    }
+
+    public function lap_stockin_pdf(Request $request) {
+
+        $dari = $request->id1;
+        $ke =  $request->id2;
+        $input_cus = $request->id3;
+        $input_inv = $request->id4;
+
+        if ($dari <> '' && $ke != '') {
+
+            $filtered_dt = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
+                                ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
+                                ->whereRaw('date(created_at) BETWEEN ? AND ?', [$dari, $ke])
+                                ->Where('id_invoice', 'like', $input_inv)
+                                ->where('nama_customer', 'like', $input_cus)
+                                ->get();
+
+            $ke =  Str::before($request->id2,'%');
+            
+            $pdf = PDF::loadview('pages.reports.laporan-sales-pdf', ['data'=>$filtered_dt, 'dari'=>$dari, 'ke'=>$ke]);
+            return $pdf->stream();
+
+        } else {
+
+            $filtered_dt = tb_invoice::join('tb_customer', 'tb_invoice.id_customer', '=', 'tb_customer.id_customer')
+                                ->select('tb_invoice.id_invoice', 'tb_invoice.created_at', 'tb_customer.nama_customer', 'tb_invoice.total')
+                                ->where('id_invoice', 'like', $input_inv)
+                                ->where('nama_customer', 'like', $input_cus)
+                                ->get();
+
+            $pdf = PDF::loadview('pages.reports.laporan-sales-pdf', ['data'=>$filtered_dt]);
             return $pdf->stream();
 
         }
