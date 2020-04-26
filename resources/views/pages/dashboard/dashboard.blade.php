@@ -43,7 +43,7 @@
   
               <div class="info-box-content">
                 <span class="info-box-text">Total Penjualan</span>
-                <span class="info-box-number">{{ $total_jual }}</span>
+                <span class="info-box-number">{{ $total_penjualan }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -60,7 +60,7 @@
   
               <div class="info-box-content">
                 <span class="info-box-text">Total Masukan</span>
-                <span class="info-box-number">Rp. {{ number_format($total_masukan, 0, '.', '.') }}</span>
+                <span class="info-box-number">Rp. {{ number_format($total_pemasukan->total, 0, '.', '.') }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -73,7 +73,7 @@
   
               <div class="info-box-content">
                 <span class="info-box-text">Laba</span>
-                <span class="info-box-number">Rp. 57.000.000</span>
+                <span class="info-box-number">Rp. {{ number_format($laba, 0, '.', '.') }}</span>
               </div>
               <!-- /.info-box-content -->
             </div>
@@ -236,7 +236,7 @@ var myLineChart = new Chart(ctx, {
     },
     title: {
       display: true,
-      text: '2019',
+      text: '2020',
       fontSize : 30,
       fontStyle : 'bold',
     }
@@ -249,13 +249,13 @@ var myPieChart = new Chart(ctxP, {
 type: 'pie',
 data: {
 labels: [
-  @foreach($jml_sales as $dt)
+  @foreach($kat_terlaris as $dt)
     "{{ $dt->nama_kat }}",
   @endforeach
 ],
 datasets: [{
 data: [
-  @foreach($jml_sales as $dt)
+  @foreach($kat_terlaris as $dt)
     {{ $dt->kat_terlaris }},
   @endforeach
 ],

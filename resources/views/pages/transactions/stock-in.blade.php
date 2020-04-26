@@ -366,10 +366,10 @@
 
         @foreach($dt_urutan_inv as $dt)
           {{ $dtcek = $dt->id_invoice }}
-          kd_supp = {{ substr($dtcek, 2, 1) }};
+          kd_supp = "{{ substr($dtcek, 2, 3) }}";
           kd_urutan = {{ substr($dtcek, -3, 3) }}
 
-          if (kd_supp == kd3) {
+          if (parseInt(kd_supp) == kd3) {
             noUr.push(kd_urutan);
           }
           
@@ -387,6 +387,12 @@
         noUr_max = 0;
 
       @endif
+      
+      if (kd3 > 9 && kd3 < 100) {
+        kd3 = "0" + kd3;
+      } else if (kd3 > 0 && kd3 < 10) {
+        kd3 = "00" + kd3
+      }
 
       var dataUr = noUr_max + 1;
 

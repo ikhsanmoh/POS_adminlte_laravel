@@ -50,7 +50,7 @@ class WebController extends Controller
     public function dashboard(){
 
         /* 
-        jumlahkan total pemasukan penjualan barang group by date(bulan update)
+        * jumlahkan total pemasukan penjualan barang group by date(bulan update)
         *
         */
 
@@ -73,45 +73,68 @@ class WebController extends Controller
         $hitung_pengunjung = file_get_contents($hasil);
 
         // Total Penjualan
-        $get_jml_barang = tb_transaksi::select('jml_barang')->get();
-
-        $hitung_total_barang = $get_jml_barang->sum('jml_barang');
+        $get_jml_barang = tb_invoice_customer::select('qty')->get();
+        $hitung_total_barang = $get_jml_barang->sum('qty');
 
         // Total Masukan
-        $get_total_harga = tb_transaksi::select('total_harga')->get();
+        $get_total_pemasukan = tb_invoice_customer::join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                            ->select(DB::raw('SUM(qty*harga_satuan) as total'))
+                            ->first();
 
-        $hitung_total_masukan = $get_total_harga->sum('total_harga');
+        //Laba
+        $get_total_pengeluaran = tb_invoice_supliers::join('tb_produk', 'tb_invoice_supliers.id_barang', '=', 'tb_produk.id_barang')
+                            ->select(DB::raw('SUM(qty*harga_satuan) as total'))
+                            ->first();                    
+        $get_laba = $get_total_pemasukan->total - $get_total_pengeluaran->total;
 
         // Line Chart - Masukan Bulanan
         $month = 1;
-        $total_pemasukan = collect([]);
+        $total_pemasukan_bulanan = collect([]);
 
-        $dtloop = DB::table('tb_transaksi')
-            ->select(DB::raw('monthname(updated_at)'))
+        // $dtloop = DB::table('tb_transaksi')
+        //     ->select(DB::raw('monthname(updated_at)'))
+        //     ->distinct()
+        //     ->get();
+        $dtloop = tb_invoice::select(DB::raw('monthname(created_at)'))
             ->distinct()
             ->get();
-        $dtloop2 = $dtloop->count('updated_at');
+        $dtloop2 = $dtloop->count('created_at');
 
-        while ($month <= $dtloop2) {
-            
-            $dt = DB::table('tb_transaksi')
-                ->select(DB::raw('monthname(updated_at), total_harga'))
-                ->whereMonth('updated_at', $month)
-                ->get();
-
-
-            $dt2 = DB::table('tb_transaksi')
-                ->select(DB::raw('monthname(updated_at)'))
-                ->whereMonth('updated_at', $month)
-                ->limit(1)
-                ->get();
-
-            $nm_bulan = $dt2->get('updated_at');
-            $jml_pemasukan = $dt->sum('total_harga');
-
-            $total_pemasukan->put($nm_bulan, $jml_pemasukan);         
+        while ($month <= 12) {
+            $dt = tb_invoice::join('tb_invoice_customer', 'tb_invoice.id_invoice', '=', 'tb_invoice_customer.id_invoice')
+                            ->join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                            ->select(DB::raw('(qty*harga_satuan) as total, monthname(tb_invoice.created_at) as bulan'))
+                            ->whereMonth('tb_invoice.created_at', $month)
+                            ->get();
+            $pemasukan_bulanan = $dt->sum('total');
+            if ( !$dt->isEmpty() ) {
+                // dd($dtloop, $dtloop2, $dt, $pemasukan_bulanan);
+                $total_pemasukan_bulanan->put(null, $pemasukan_bulanan);
+            }
             $month++;
         }
+
+        // while ($month <= $dtloop2) {
+            
+        //     $dt = DB::table('tb_transaksi')
+        //         ->select(DB::raw('monthname(updated_at), total_harga'))
+        //         ->whereMonth('updated_at', $month)
+        //         ->get();
+
+        //     // $dt2 = DB::table('tb_transaksi')
+        //     //     ->select(DB::raw('monthname(updated_at) as bulan'))
+        //     //     ->whereMonth('updated_at', $month)
+        //     //     ->limit(1)
+        //     //     ->get();
+
+        //     // $nm_bulan = $dt2->get('updated_at');
+        //     $jml_pemasukan = $dt->sum('total_harga');
+
+        //     $total_pemasukan->put(null, $jml_pemasukan);         
+        //     $month++;
+        // }
+
+        // dd($dtloop, $dtloop2, $dt, $total_pemasukan);
 
         //Pie Chart - Kategori Terlaris
         $get_transaksi = tb_transaksi::join('tb_produk', 'tb_transaksi.id_barang', '=', 'tb_produk.id_barang')
@@ -120,6 +143,14 @@ class WebController extends Controller
                             ->select(DB::raw('tb_kategori.nama_kat, COUNT(tb_kategori.nama_kat) as kat_terlaris'))
                             ->groupBy('tb_kategori.nama_kat')
                             ->get();
+
+        $get_penjualan_terlaris = tb_invoice_customer::join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
+                            ->join('link_kategori','tb_produk.id_barang', '=', 'link_kategori.id_barang')
+                            ->join('tb_kategori', 'link_kategori.id_kat', '=', 'tb_kategori.id_kat')
+                            ->select(DB::raw('tb_kategori.nama_kat, COUNT(tb_kategori.nama_kat) as kat_terlaris'))
+                            ->groupBy('tb_kategori.nama_kat')
+                            ->get();
+        // dd($get_penjualan_terlaris);
 
         //Daftar Produk Terbaru
         $get_produk = tb_produk::select('id_barang', 'nama_barang', 'stok', 'created_at')
@@ -132,12 +163,13 @@ class WebController extends Controller
         $this->stokAlert();
 
         return view('pages.dashboard.dashboard', [
-            'total' => $total_pemasukan, 
-            'jml_visitor' => $hitung_pengunjung, 
-            'total_jual' => $hitung_total_barang, 
-            'total_masukan' => $hitung_total_masukan,
+            'jml_visitor' => $hitung_pengunjung,
+            'total_penjualan' => $hitung_total_barang,
+            'total_pemasukan' => $get_total_pemasukan,
+            'laba' => $get_laba,
+            'total' => $total_pemasukan_bulanan,
             'produk_terbaru' => $sort_produk,
-            'jml_sales' => $get_transaksi]);
+            'kat_terlaris' => $get_penjualan_terlaris]);
     }
 
     //------------------------------- PAGE NEW USERS --------------------------------------
@@ -413,7 +445,7 @@ class WebController extends Controller
                             ->select('tb_produk.id_barang', 'tb_produk.nama_barang', 'tb_kategori.nama_kat', 'tb_produk.harga_satuan', 'tb_produk.stok')
                             ->get();
         // $data_kategori = DB::table('tb_kategori')->get();
-
+        // dd($dtProduk);
         $this->stokAlert();
         
         return view('pages.products.product', [
@@ -681,6 +713,10 @@ class WebController extends Controller
             }
 
             $id_produk_terbaru = tb_produk::get()->max('id_barang');
+            $kategori_default = DB::table('link_kategori')->insert([
+                'id_kat' => 17,
+                'id_barang' => $id_produk_terbaru
+            ]);
             
             $simpan_data3 = tb_invoice_supliers::create([
                 'id_invoice' => $data1,
