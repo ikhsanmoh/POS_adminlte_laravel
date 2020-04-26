@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\Role;
-use App\tb_transaksi;
 use App\tb_produk;
 use App\tb_invoice;
 use App\tb_invoice_customer;
@@ -137,13 +136,6 @@ class WebController extends Controller
         // dd($dtloop, $dtloop2, $dt, $total_pemasukan);
 
         //Pie Chart - Kategori Terlaris
-        $get_transaksi = tb_transaksi::join('tb_produk', 'tb_transaksi.id_barang', '=', 'tb_produk.id_barang')
-                            ->join('link_kategori','tb_produk.id_barang', '=', 'link_kategori.id_barang')
-                            ->join('tb_kategori', 'link_kategori.id_kat', '=', 'tb_kategori.id_kat')
-                            ->select(DB::raw('tb_kategori.nama_kat, COUNT(tb_kategori.nama_kat) as kat_terlaris'))
-                            ->groupBy('tb_kategori.nama_kat')
-                            ->get();
-
         $get_penjualan_terlaris = tb_invoice_customer::join('tb_produk', 'tb_invoice_customer.id_barang', '=', 'tb_produk.id_barang')
                             ->join('link_kategori','tb_produk.id_barang', '=', 'link_kategori.id_barang')
                             ->join('tb_kategori', 'link_kategori.id_kat', '=', 'tb_kategori.id_kat')
